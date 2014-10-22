@@ -40,7 +40,7 @@ DataMapper.finalize
 DataMapper.auto_upgrade!
 
 Base = 36
-$mailu= ""
+$mailu = ""
 
 get '/' do
   puts "inside get '/': #{params}"
@@ -67,8 +67,8 @@ end
 
 get '/noGoogle' || '/auth/failure' do
         puts "inside get '/': #{params}"
-	$email = ""        
-	@list = ShortenedUrl.all(:order => [ :id.asc ], :limit => 20, :idusu => $email)  #listar url que no son de usuario
+	$mailu = ""        
+	@list = ShortenedUrl.all(:order => [ :id.asc ], :limit => 20, :idusu => $mailu)  #listar url que no son de usuario
         haml :index
 
 end
@@ -79,7 +79,11 @@ post '/' do
   uri = URI::parse(params[:url])
   if uri.is_a? URI::HTTP or uri.is_a? URI::HTTPS then
     begin
-      @short_url = ShortenedUrl.first_or_create(:url => params[:url])
+         if params[:to] == " "
+                @short_url = ShortenedUrl.first_or_create(:url => params[:url], :idusu => $mailu)
+      else
+                @short_url = ShortenedUrl.first_or_create(:url => params[:url], :to => params[:to], :idusu => $mailu)  #Aqui se guarda la dirección corta
+      end
     rescue Exception => e
       puts "EXCEPTION!!!!!!!!!!!!!!!!!!!"
       pp @short_url
