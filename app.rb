@@ -40,12 +40,29 @@ DataMapper.finalize
 DataMapper.auto_upgrade!
 
 Base = 36
+$mailu= ""
 
 get '/' do
   puts "inside get '/': #{params}"
-  @list = ShortenedUrl.all(:order => [ :id.asc ], :limit => 20)
+  @list = ShortenedUrl.all(:order => [ :id.asc ], :limit => 20, :idusu => $mailu)
   # in SQL => SELECT * FROM "ShortenedUrl" ORDER BY "id" ASC
   haml :index
+end
+
+get '/auth/:name/callback' do
+        @auth = request.env['omniauth.auth']
+        $mailu = @auth['info'].mail
+        if @auth then
+        begin
+                puts "inside get '/': #{params}"
+                @list = ShortenedUrl.all(:order => [ :id.asc ], :limit => 20, :idusu => $mailu)  #listar url del usuario  
+                # in SQL => SELECT * FROM "ShortenedUrl" ORDER BY "id" ASC
+                haml :index
+        end
+        else
+                redirect '/auth/failure'
+        end
+
 end
 
 post '/' do
