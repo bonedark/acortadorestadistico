@@ -1,8 +1,53 @@
 !!!
 %html
-    %body
-        =yield
-        %form(action="/" method="POST")
-            %label(for="url")
-            %input(type="text" name="url" id="myurl" autofocus size=100 accesskey="s")
-            %input(type="submit" value="Shorten")
+%head
+%meta{:content => "text/html; charset=UTF-8", "http-equiv" => "content-type"}/
+%meta{:charset => "utf-8"}/
+%title shortUrl
+%meta{:content => "width=device-width, initial-scale=1, maximum-scale=1", :name => "viewport"}/
+%link{:href => "/css/bootstrap.min.css", :rel => "stylesheet"}/
+/[if lt IE 9]
+<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+%link{:href => "/css/styles.css", :rel => "stylesheet"}/
+%body
+        .container-full
+                .row
+                        .col-lg-12.text-center.v-center
+                                %h1 TinyClone                   
+                                %p.lead Acortador de URLs   
+                                %a{:alt => "Google", :href => "/auth/google_oauth2"} Sign in with Google
+                                %br/
+                                %a{:alt => "salir google", :href => "/noGoogle"} Not Sign in with Google
+                                %br/          
+                                %br/
+                                %br/
+  
+                                %form.form-inline{:action => "/", :method => "post"}
+  
+                                        .form-group{:style => "text-align:center;margin:0 auto;"}
+                                                %label(for="url")               
+                                                %input.form-control.input-lg{:autofocus => "", :name => "url", :placeholder => "Introduce Tu Direccion URL", :size => "60", :type => "text", :value => ""}/       
+                                                %input.form-control.input-lg{:autofocus => "", :name => "to", :placeholder => "short URL (opcional)", :size =>     "15", :type => "text", :value => ""}/        
+                                                %button.btn.btn-lg.btn-primary{:type => "submit", :value => "submit"} NOW!
+                %br/
+                %br/
+                %br/
+                %br/
+                %br/
+                %br/
+                %br/
+                %br/
+                %br/
+        .row
+                .col-md-4.col-md-offset-4.container-down
+                        =yield
+        .row
+                .col-lg-12
+                        %br/
+                        %br/
+                        %p.text-center Jonathan Barrera Delgado - Daniel Nicolás Fernández Del Castillo Salazar
+                        %br/
+                        %br/
+/ script references
+%script{:src => "//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"}
+%script{:src => "../js/bootstrap.min.js"}
