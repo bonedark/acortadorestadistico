@@ -38,6 +38,10 @@ DataMapper.finalize
 
 #DataMapper.auto_migrate!
 DataMapper.auto_upgrade!
+#not_found do
+	status 404
+	erb :not_found
+end
 
 Base = 36
 $mailu = ""
@@ -98,13 +102,19 @@ end
 get '/:shortened' do
   puts "inside get '/:shortened': #{params}"
   short_url = ShortenedUrl.first(:id => params[:shortened].to_i(Base))
-
+  to_url = ShortenedUrl.first(:to => params[:shortened])
   # HTTP status codes that start with 3 (such as 301, 302) tell the
   # browser to go look for that resource in another location. This is
   # used in the case where a web page has moved to another location or
   # is no longer at the original location. The two most commonly used
   # redirection status codes are 301 Move Permanently and 302 Found.
-  redirect short_url.url, 301
+
+if to_url
+        redirect to_url.url, 301
+  else
+        redirect short_url.url, 301
+  end
+
 end
 
 error do haml :index end
