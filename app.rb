@@ -65,6 +65,15 @@ get '/auth/:name/callback' do
 
 end
 
+get '/noGoogle' || '/auth/failure' do
+        puts "inside get '/': #{params}"
+	$email = ""        
+	@list = ShortenedUrl.all(:order => [ :id.asc ], :limit => 20, :idusu => $email)  #listar url que no son de usuario
+        haml :index
+
+end
+
+
 post '/' do
   puts "inside post '/': #{params}"
   uri = URI::parse(params[:url])
