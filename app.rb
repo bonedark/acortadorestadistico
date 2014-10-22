@@ -38,7 +38,8 @@ DataMapper.finalize
 
 #DataMapper.auto_migrate!
 DataMapper.auto_upgrade!
-#not_found do
+
+not_found do
 	status 404
 	erb :not_found
 end
