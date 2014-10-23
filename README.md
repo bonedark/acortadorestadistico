@@ -1,16 +1,17 @@
 Sistemas y Tecnologías Web:
 Práctica: Acortador de URL
 
-Nombre: Daniel Nicolás Fernández del Castillo Salazar. Alu0100463057 
-Nombre: Jonathan Barrera Delgado. Alu0100450187
+#Nombre: Daniel Nicolás Fernández del Castillo Salazar. Alu0100463057 
+#Nombre: Jonathan Barrera Delgado. Alu0100450187
 
 Expanda el ejemplo Acortador de URLs presentado en la sección 40.5 para que admita además abreviaciones elegidas por el usuario.
 
-Repositorio
+Para ejecutar la app debemos seguir los siguientes pasos
 
-Heroku
+1. Repo [https://github.com/bonedark/AcortadorURL](https://github.com/bonedark/AcortadorURL)
+2. Heroku [http://acortaurl.herokuapp.com](http://acortaurl.herokuapp.com)
+3. GH-pages [http://bonedark.github.io/AcortadorURL](http://bonedark.github.io/AcortadorURL)
 
-gh-pages
 
 Shortened URLS
 Acortador de urls con autenticación con Google
