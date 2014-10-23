@@ -17,6 +17,9 @@ use OmniAuth::Builder do
     provider :google_oauth2, config['identifier'], config['secret']
 end
 
+disable :show_exceptions
+disable :raise_errors
+
 enable :sessions
 set :session_secret, '*&(^#234a)'
 
@@ -54,8 +57,13 @@ get '/' do
 end
 
 get '/auth/:name/callback' do
+    session[:username] = params[:username]
+    "logged in as #{session[:username]}"
     session[:auth] = @auth = request.env['omniauth.auth']
-    session[:mailu] = @auth['info'].mailu
+    session[:mailu] = @auth['info'].email
+    session[:name] = @auth['info'].name
+    session[:username] = @auth['info'].username
+
     if session[:auth] then
         begin
             puts "inside get '/': #{params}"
@@ -69,8 +77,10 @@ get '/auth/:name/callback' do
 end
 
 get '/noGoogle' || '/auth/failure' do
+
+    old_user = session[:username]
     session.clear
-    session[:mailu] = " "
+    "logged out #{old_user}"
     redirect '/'  
 end
 
@@ -114,4 +124,4 @@ get '/:shortened' do
     
 end
 
-error do haml :index end
+error do erb :not_found end
