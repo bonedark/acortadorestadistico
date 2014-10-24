@@ -15,11 +15,11 @@ h1 {
         width: 100%;
         min-height:20%;        
         background-color:#6E6E6E;
-        color:green;; 
+        color:blue;; 
         overflow:hidden;
 }   
 .container-full a {  
-        color:yellow;;
+        color:blue;;
         text-decoration:none;
 } 
 .v-center {
