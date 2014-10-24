@@ -15,10 +15,10 @@
                         .col-lg-12.text-center.v-center
                                 %h1 Acortador de URLs                   
                                 %p.lead Practica 5   
-                                %a{:alt => "Google", :href => "/auth/google_oauth2"} Sign in with Google
+                                %a{:alt => "Google", :href => "/auth/google_oauth2"} Entrar Con Google
                                 %br/
-                                %a{:alt => "salir google", :href => "/noGoogle"} Not Sign in with Google
-                                %br/          
+                                %a{:alt => "salir google", :href => "/noGoogle"} Cerrar Sesión
+                                %p= "Bienvenido #{session[:name]}!" 
                                 %br/
                                 %br/
   
@@ -27,7 +27,7 @@
                                         .form-group{:style => "text-align:center;margin:0 auto;"}
                                                 %label(for="url")               
                                                 %input.form-control.input-lg{:autofocus => "", :name => "url", :placeholder => "Introduce Tu Direccion URL", :size => "60", :type => "text", :value => ""}/       
-                                                %input.form-control.input-lg{:autofocus => "", :name => "to", :placeholder => "short URL (opcional)", :size =>     "15", :type => "text", :value => ""}/        
+                                                %input.form-control.input-lg{:autofocus => "", :name => "to", :placeholder => "URL Corta (opcional)", :size =>     "15", :type => "text", :value => ""}/         
                                                 %button.btn.btn-lg.btn-primary{:type => "submit", :value => "submit"} ACORTA!
                 %br/
                 %br/
