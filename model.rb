@@ -1,17 +1,11 @@
-class User
-	include DataMapper::Resource
-		property :id, Serial
-		property :name, String
-		property :email, String
-		property :imagen, Text		
-end
-
-class ShortenedUrl
+class Shortenedurl
   include DataMapper::Resource
 
   property :id, Serial
-  property :idusu, Text 
+  property :uid, String
+  property :email, String
   property :url, Text
-  property :to, Text
-  
+  property :urlshort, Text, :key => true
+
 end
+
