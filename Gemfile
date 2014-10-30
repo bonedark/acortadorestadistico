@@ -18,3 +18,8 @@ group :development, :test do
 	gem "sqlite3"
 	gem "dm-sqlite-adapter"
 end
+
+group :test do
+	gem "rack-test"
+	gem "rake"
+end
