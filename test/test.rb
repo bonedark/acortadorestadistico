@@ -2,6 +2,8 @@ ENV['RACK_ENV'] = 'test'
 
 require 'minitest/autorun'
 require 'rack/test'
+require 'sinatra'
+require 'data_mapper'
 require_relative '../app.rb'
 
 
