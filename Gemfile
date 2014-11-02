@@ -18,11 +18,20 @@ gem 'rest-client'
 gem 'xml-simple'
 
 group :production do
-	gem "pg"
-	gem "dm-postgres-adapter"
+	gem 'haml'
+    gem "pg"
+    gem "dm-postgres-adapter"
 end
 
-group :development, :test do
+group :development do
+	gem 'haml'
+    gem "sqlite3"
+    gem "dm-sqlite-adapter"
+end
+
+group :test do
 	gem "sqlite3"
 	gem "dm-sqlite-adapter"
+    gem "rack-test"
+    gem "rake"
 end
