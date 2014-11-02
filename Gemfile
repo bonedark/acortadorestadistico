@@ -1,13 +1,21 @@
 source 'https://rubygems.org'
 
 #gem 'alphadecimal'
+
 gem 'data_mapper'
+gem 'sinatra'
 gem 'sinatra-contrib'
-gem 'haml'
 gem 'omniauth'
 gem 'omniauth-google-oauth2'
-gem 'pry'
+gem 'omniauth-github'
+gem 'omniauth-facebook'
+gem 'pry' 
 gem 'erubis'
+gem 'chartkick'
+gem 'groupdate'
+
+gem 'rest-client'
+gem 'xml-simple'
 
 group :production do
 	gem "pg"
