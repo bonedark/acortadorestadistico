@@ -48,7 +48,7 @@ get '/auth/:name/callback' do
     session[:name] = @auth['info'].first_name + " " + @auth['info'].last_name
     session[:email] = @auth['info'].email
     @list = Shortenedurl.all(:uid => session[:uid])
-    haml :index
+    haml :user
 end
 
 get '/auth/logout' do
@@ -73,7 +73,7 @@ end
             haml :index
             else
             @list = Shortenedurl.all(:uid => session[:uid])
-            haml :index
+            haml :user
         end
     end
 end
