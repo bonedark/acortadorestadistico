@@ -112,7 +112,7 @@ post '/' do
             redirect "/#{@message}"
         end
         else
-        logger.info "Error! <#{params[:url]}> is not a valid URL"
+        logger.info "Error! <#{params[:url]}> está URL no es valida"
     end
     redirect '/'
 end
