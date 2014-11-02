@@ -5,31 +5,24 @@ require 'sinatra/reloader' if development?
 require 'haml'
 require 'uri'
 require 'pp'
-#require 'socket'
+require 'data_mapper'
 require 'omniauth-oauth2'
 require 'omniauth-google-oauth2'
-require 'pry'
-require 'erubis'
-require 'data_mapper'
 
-use OmniAuth::Builder do
-    config = YAML.load_file 'config/config.yml'
-    provider :google_oauth2, config['identifier'], config['secret']
-end
-
-disable :show_exceptions
-disable :raise_errors
 
 enable :sessions
 set :session_secret, '*&(^#234a)'
 
 configure :development do
-    DataMapper.setup( :default, ENV['DATABASE_URL'] ||
-                     "sqlite3://#{Dir.pwd}/my_shortened_urls.db" )
+    DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/my_shortened_urls.db")
 end
 
-configure :production do   #heroku
+configure :production do
     DataMapper.setup(:default, ENV['DATABASE_URL'])
+end
+
+configure :test do
+    DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/test.db")
 end
 
 DataMapper::Logger.new($stdout, :debug)
@@ -42,86 +35,84 @@ DataMapper.finalize
 #DataMapper.auto_migrate!
 DataMapper.auto_upgrade!
 
-not_found do
-    status 404
-    erb :not_found
-end
-
-Base = 36
-
-
-get '/' do
-    puts "inside get '/': #{params}"
-    @list = ShortenedUrl.all(:order => [ :id.asc ], :limit => 20, :idusu => session[:mailu])
-    haml :index
+#OmniAuth y get's de autenticación
+use OmniAuth::Builder do
+    config = YAML.load_file 'config/config.yml'
+    provider :google_oauth2, config['identifier'], config['secret']
 end
 
 get '/auth/:name/callback' do
-    session[:username] = params[:username]
-    "logged in as #{session[:username]}"
-    session[:auth] = @auth = request.env['omniauth.auth']
-    session[:mailu] = @auth['info'].email
-    session[:name] = @auth['info'].name
-    session[:username] = @auth['info'].username
+    @auth = request.env['omniauth.auth']
+    session[:plt] = (params[:name] == 'google_oauth2') ? 'google' : params[:name]
+    session[:uid] = @auth['uid'];
+    session[:name] = @auth['info'].first_name + " " + @auth['info'].last_name
+    session[:email] = @auth['info'].email
+    @list = Shortenedurl.all(:uid => session[:uid])
+    haml :index
+end
 
-    if session[:auth] then
-        begin
+get '/auth/logout' do
+    session.clear
+    redirect '/'
+end
+#Fin de: OmniAuth y get's de autenticación
+
+#Get's /, errores
+['/', '/:error'].each do |path|
+    get path do
+        if params[:error] == "ERROR"
+            @message = "La url esta cogida"
+            elsif params[:error] != nil
+            @message =  "La url no existe"
+            else
+            @message = nil
+        end
+        if !session[:uid]
             puts "inside get '/': #{params}"
-            @list = ShortenedUrl.all(:order => [ :id.asc ], :limit => 20, :idusu => session[:mailu])  #listar url del usuario
+            @list = Shortenedurl.all(:order => [ :id.desc ], :limit => 20)
+            haml :index
+            else
+            @list = Shortenedurl.all(:uid => session[:uid])
             haml :index
         end
-        else
-        redirect '/auth/failure'
     end
-    
-end
-
-get '/noGoogle' || '/auth/failure' do
-
-    old_user = session[:username]
-    session.clear
-    "logged out #{old_user}"
-    redirect '/'  
 end
 
 
+#Dependientes de info
+
+
+#Fin de: dependencias de info
+
+#Get para visitar una URL corta
+get '/visitar/:shortened' do
+    puts "inside get '/:shortened': #{params}"
+    short_url = Shortenedurl.first(:urlshort => params[:shortened])
+    short_url.save
+    redirect short_url.url, 301
+end
+
+#Post para nuevas URL's
 post '/' do
+    @message = ""
     puts "inside post '/': #{params}"
     uri = URI::parse(params[:url])
     if uri.is_a? URI::HTTP or uri.is_a? URI::HTTPS then
-        begin
-            if params[:to] == " "
-                @short_url = ShortenedUrl.first_or_create(:url => params[:url], :idusu => session[:mailu])
-                else
-                @short_url = ShortenedUrl.first_or_create(:url => params[:url], :to => params[:to], :idusu => session[:mailu])  #Aqui se guarda la dirección corta
+        if !Shortenedurl.first(:urlshort => params[:urlshort])
+            begin
+                sh = (params[:urlshort] != '') ? params[:urlshort] : (Shortenedurl.count+1)
+                @short_url = Shortenedurl.first_or_create(:uid => session[:uid], :email => session[:email], :url => params[:url], :urlshort => sh)
+                rescue Exception => e
+                puts "EXCEPTION!!!!!!!!!!!!!!!!!!!"
+                pp @short_url
+                puts e.message
             end
-            rescue Exception => e
-            puts "EXCEPTION!!!!!!!!!!!!!!!!!!!"
-            pp @short_url
-            puts e.message
+            else
+            @message = "ERROR"
+            redirect "/#{@message}"
         end
         else
         logger.info "Error! <#{params[:url]}> is not a valid URL"
     end
     redirect '/'
 end
-
-get '/:shortened' do
-    puts "inside get '/:shortened': #{params}"
-    short_url = ShortenedUrl.first(:id => params[:shortened].to_i(Base))
-    to_url = ShortenedUrl.first(:to => params[:shortened])
-    # HTTP status codes that start with 3 (such as 301, 302) tell the
-    # browser to go look for that resource in another location. This is
-    # used in the case where a web page has moved to another location or
-    # is no longer at the original location. The two most commonly used
-    # redirection status codes are 301 Move Permanently and 302 Found.
-    
-    if to_url
-        redirect to_url.url, 301
-        else
-        redirect short_url.url, 301
-    end
-    
-end
-
-error do erb :not_found end
