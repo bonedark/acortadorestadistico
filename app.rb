@@ -81,6 +81,20 @@ end
 
 #Dependientes de info
 
+#Get's para estadísticas y filtrado de usuarios en estadisticas
+['/all/stadistic', '/all/stadistic/:user'].each do |path|
+  get path do
+    if params[:user] == 'public'
+      @short_url = Shortenedurl.all(:email => nil, :order => [:n_visits.desc])
+    elsif params[:user] != nil
+      @short_url = Shortenedurl.all(:email => params[:user], :order => [:n_visits.desc])
+    else
+      @short_url = Shortenedurl.all(:order => [:n_visits.desc])
+    end
+    #haml :index, :layout => :admin
+  end
+end
+
 
 #Fin de: dependencias de info
 
@@ -116,3 +130,45 @@ post '/' do
     end
     redirect '/'
 end
+
+#Funciones para obtener IP, Geolocalizacion y contruir el mapa con la API
+def get_remote_ip(env)
+  puts "request.url = #{request.url}"
+  puts "request.ip = #{request.ip}"
+  puts env
+  if addr = env['HTTP_X_FORWARDED_FOR']
+    puts "env['HTTP_X_FORWARDED_FOR'] = #{addr}"
+    addr.split(',').first.strip
+  else
+    puts "env['REMOTE_ADDR'] = #{env['REMOTE_ADDR']}"
+    env['REMOTE_ADDR']
+  end
+end
+
+def get_geo
+  xml = RestClient.get "http://freegeoip.net/xml/#{get_remote_ip(env)}"
+  data = XmlSimple.xml_in(xml.to_s)
+  {"ip" => data['Ip'][0].to_s, "countryCode" => data['CountryCode'][0].to_s, "countryName" => data['CountryName'][0].to_s, "city" => data['City'][0].to_s, "latitude" => data['Latitude'][0].to_s, "longitude" => data['Longitude'][0].to_s}
+end
+
+
+def map(visit)
+  str = ''
+  visit.as_map(params[:short_url]).each do |item|
+    if (item.latitude != nil)
+      item.city = (item.city == '{}') ? item.country : item.city
+      str += "var pos = new google.maps.LatLng(#{item.latitude},#{item.longitude});
+
+              var infowindow = new google.maps.InfoWindow({
+                  map: map,
+                  position: pos,
+                  content: \" #{item.city}: #{item.count} \"
+              });
+              map.setCenter(pos);"
+    end
+  end
+  str
+end
+
+
+
