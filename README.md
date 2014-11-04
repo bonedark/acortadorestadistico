@@ -1,5 +1,5 @@
 #Sistemas y Tecnologías Web:
-##Práctica: Acortador de URL
+##Práctica: Acortador de URL Esta
 
 ###Nombre: Daniel Nicolás Fernández del Castillo Salazar. Alu0100463057 
 ###Nombre: Jonathan Barrera Delgado. Alu0100450187
