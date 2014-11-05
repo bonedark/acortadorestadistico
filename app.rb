@@ -8,7 +8,7 @@ require 'pp'
 require 'data_mapper'
 require 'omniauth-oauth2'
 require 'omniauth-google-oauth2'
-
+require 'chartkick'
 
 enable :sessions
 set :session_secret, '*&(^#234a)'
@@ -190,6 +190,5 @@ def map(visit)
   end
   str
 end
-
 
 
