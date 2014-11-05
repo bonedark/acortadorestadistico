@@ -81,15 +81,50 @@ end
 
 #Dependientes de info
 
+#Get's para estadísticas y filtrado de usuarios en estadisticas
+['/all/stadistic', '/all/stadistic/:user'].each do |path|
+  get path do
+    if params[:user] == 'public'
+      @short_url = Shortenedurl.all(:email => nil, :order => [:n_visits.desc])
+    elsif params[:user] != nil
+      @short_url = Shortenedurl.all(:email => params[:user], :order => [:n_visits.desc])
+    else
+      @short_url = Shortenedurl.all(:order => [:n_visits.desc])
+    end
+    haml :estadisticas, :layout => :admin
+  end
+end
+
+#Get's para info por URL
+['/info/:short_url', '/info/:short_url/:num_of_days', '/info/:short_url/:num_of_days/:map'].each do |path|
+  get path do
+    @link = Shortenedurl.first(:urlshort => params[:short_url])
+    @visit = Visit.all()
+    @country = Hash.new
+    @visit.count_by_country_with(params[:short_url]).to_a.each do |item|
+      @country[item.country] = item.count
+    end
+    @days = Hash.new
+    @visit.as_date(params[:short_url]).each do |item|
+      @days[item.date] = item.count
+    end
+    @str = map(@visit)
+    haml :info, :layout => :admin
+  end
+end
 
 #Fin de: dependencias de info
 
 #Get para visitar una URL corta
 get '/visitar/:shortened' do
-    puts "inside get '/:shortened': #{params}"
-    short_url = Shortenedurl.first(:urlshort => params[:shortened])
-    short_url.save
-    redirect short_url.url, 301
+  puts "inside get '/:shortened': #{params}"
+  short_url = Shortenedurl.first(:urlshort => params[:shortened])
+  short_url.n_visits += 1
+  short_url.save
+  data = get_geo
+  visit = Visit.new(:ip => data['ip'], :country => data['countryName'], :countryCode => data['countryCode'], :city => data["city"], :latitude => data["latitude"], :longitude => data["longitude"], :shortenedurl => short_url, :created_at => Time.now)
+  visit.save
+  redirect short_url.url, 301
 end
 
 #Post para nuevas URL's
@@ -101,8 +136,8 @@ post '/' do
         if !Shortenedurl.first(:urlshort => params[:urlshort])
             begin
                 sh = (params[:urlshort] != '') ? params[:urlshort] : (Shortenedurl.count+1)
-                @short_url = Shortenedurl.first_or_create(:uid => session[:uid], :email => session[:email], :url => params[:url], :urlshort => sh)
-                rescue Exception => e
+                @short_url = Shortenedurl.first_or_create(:uid => session[:uid], :email => session[:email], :url => params[:url], :urlshort => sh, :n_visits => 0)
+            rescue Exception => e
                 puts "EXCEPTION!!!!!!!!!!!!!!!!!!!"
                 pp @short_url
                 puts e.message
@@ -116,3 +151,45 @@ post '/' do
     end
     redirect '/'
 end
+
+#Funciones para obtener IP, Geolocalizacion y contruir el mapa con la API
+def get_remote_ip(env)
+  puts "request.url = #{request.url}"
+  puts "request.ip = #{request.ip}"
+  puts env
+  if addr = env['HTTP_X_FORWARDED_FOR']
+    puts "env['HTTP_X_FORWARDED_FOR'] = #{addr}"
+    addr.split(',').first.strip
+  else
+    puts "env['REMOTE_ADDR'] = #{env['REMOTE_ADDR']}"
+    env['REMOTE_ADDR']
+  end
+end
+
+def get_geo
+  xml = RestClient.get "http://freegeoip.net/xml/#{get_remote_ip(env)}"
+  data = XmlSimple.xml_in(xml.to_s)
+  {"ip" => data['Ip'][0].to_s, "countryCode" => data['CountryCode'][0].to_s, "countryName" => data['CountryName'][0].to_s, "city" => data['City'][0].to_s, "latitude" => data['Latitude'][0].to_s, "longitude" => data['Longitude'][0].to_s}
+end
+
+
+def map(visit)
+  str = ''
+  visit.as_map(params[:short_url]).each do |item|
+    if (item.latitude != nil)
+      item.city = (item.city == '{}') ? item.country : item.city
+      str += "var pos = new google.maps.LatLng(#{item.latitude},#{item.longitude});
+
+              var infowindow = new google.maps.InfoWindow({
+                  map: map,
+                  position: pos,
+                  content: \" #{item.city}: #{item.count} \"
+              });
+              map.setCenter(pos);"
+    end
+  end
+  str
+end
+
+
+
