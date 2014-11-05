@@ -1,0 +1,25 @@
+.panel.panel-primary
+    .panel-heading
+        %h1 Bienvenido #{session[:name]}
+        %h2 Estas son tus URL's guardadas
+    .panel-body
+        %table.table
+            %tr
+                %th
+                    URL completa
+                %th
+                    URL corta
+                %th
+                    Dirección Email
+
+            - @list.each do |url|
+                %tr
+                    %td
+                        #{url.url}
+                    %td
+                        %a{:href=>"/visitar//#{url.urlshort}"} #{url.urlshort}
+                    %td
+                        - if url.email != nil
+                            #{url.email}
+                        - else
+                            Pública
