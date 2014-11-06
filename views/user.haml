@@ -11,8 +11,8 @@
                     URL corta
                 %th
                     Dirección Email
-		%th
-		    Estadísticas
+                %th
+                    Estadísticas
 
             - @list.each do |url|
                 %tr
@@ -25,7 +25,7 @@
                             #{url.email}
                         - else
                             Pública
-      	            %td.text-center
+                    %td.text-center
                         %a{:href=>"/info/#{url.urlshort}", :title => "Estadísticas"}
                             %i.fa.fa-bar-chart
 
