@@ -1,35 +1,24 @@
 #Sistemas y Tecnologías Web:
-##Práctica: Acortador de URL Esta
+##Práctica/Taller: Estadísticas de Visitas al Acortador de URLs
 
 ###Nombre: Daniel Nicolás Fernández del Castillo Salazar. Alu0100463057 
 ###Nombre: Jonathan Barrera Delgado. Alu0100450187
 
 Expanda el ejemplo Acortador de URLs presentado en la sección 40.5 para que admita además abreviaciones elegidas por el usuario.
 
-Para ejecutar la app debemos seguir los siguientes pasos
+Enlaces para ejecutar o acceder al código:
 
-1. Repo [https://github.com/bonedark/AcortadorURL](https://github.com/bonedark/AcortadorURL)
-2. Heroku [http://acortaurl.herokuapp.com](http://acortaurl.herokuapp.com)
-3. GH-pages [http://bonedark.github.io/AcortadorURL](http://bonedark.github.io/AcortadorURL)
+1. Repo [https://github.com/bonedark/acortadorestadistico](https://github.com/bonedark/acortadorestadistico)
+2. Heroku [http://acortaestadistico.herokuapp.com](http://acortaestadistico.herokuapp.com)
+3. GH-pages [http://bonedark.github.io/acortadorestadistico](http://bonedark.github.io/acortadorestadistico)
 
 
-Shortened URLS
-Acortador de urls con autenticación con Google
+En esta práctica extendemos la anterior 40.9 con información estadística acerca de las visitas. Se pide que se presenten gráficos estadísticos (barras, etc.) del número de visitas por día, por país, etc.
 
-See
+La información de las visitas se guardará en una tabla Visit.
 
-DataMapper
-Haml
-Sinatra
-Deploying Rack-based Apps in Heroku
-Intridea Omniauth
-Problemas con las gemas postgree
+Cada objeto Visit representará una visita a la URL corta y contendrá información acerca de la visita:
 
-Siga los siguientes pasos:
-
-sudo apt-get install libpq-dev
-gem install pg
-sudo apt-get install postgresql
-sudo apt-get install postgresql-server-dev-9.3
-https://www.heroku.com/postgres
+la fecha de la visita y
+la procedencia de la misma.
 
