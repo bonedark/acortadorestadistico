@@ -28,7 +28,11 @@
                     %ul.nav.navbar-nav.navbar-right
                         %li.hidden
                             %a{:href => "/"}
-
+                        %li.page-scroll
+                            %a{:href => "/all/stadistic"}
+                                %button.btn.btn-success
+                                    %i.fa.fa-pie-chart
+                                    Estadísticas
                         - if !session[:uid]
                                 
                             %li.page-scroll
