@@ -9,6 +9,7 @@ require 'data_mapper'
 require 'omniauth-oauth2'
 require 'omniauth-google-oauth2'
 require 'chartkick'
+%w( dm-core dm-timestamps dm-types restclient xmlsimple).each  { |lib| require lib}
 
 enable :sessions
 set :session_secret, '*&(^#234a)'
@@ -189,4 +190,12 @@ def map(visit)
         end
     end
     str
+end
+#Get's y funciones de debug
+get '/debug/visitado' do
+    puts "inside get '/': #{params}"
+    @list = Shortenedurl.visits.all()
+    puts @list
+    puts "-------------------------------------------"
+    # in SQL => SELECT * FROM "Shortenedurl" ORDER BY "id" ASC
 end
