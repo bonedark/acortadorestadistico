@@ -2,7 +2,7 @@ ENV['RACK_ENV'] = 'test'
 
 require 'minitest/autorun'
 require 'rack/test'
-require_relative '../twitter.rb'
+require_relative '../app.rb'
 
 
 include Rack::Test::Methods
@@ -11,7 +11,7 @@ def app
     Sinatra::Application
 end
 
-describe "SYTW P2 - page" do
+describe "SYTW P5 - page" do
     
     
     it "Should return index" do
@@ -47,7 +47,7 @@ describe "SYTW P2 - page" do
     #end
 end
 
-describe "SYTW P2 - Funtions" do
+describe "SYTW P5 - Funtions" do
     before :all do
         @tw = Twitterpopular.new
         @client = my_twitter_client()

@@ -8,6 +8,11 @@ task :rackup do
   sh "rackup"
 end
 
+desc "Test"
+task :test do
+  sh "ruby test/test.rb"
+end
+
 # substitute XXX for the name of your app
 desc "create heroku app"
 task :create, :appname do |t,args|
